@@ -211,24 +211,7 @@ public class MainActivity extends AppCompatActivity {
         startBtn.setText("Running");
         startBtn.setTextColor(Color.GREEN);
         stopBtn.setEnabled(true);
-        char[][] room = new char[6][6];
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (i == 0 || i == 5) {
-                    room[i][j] = 'w';
-                } else {
-                    if (j == 0 || j == 5) {
-                        room[i][j] = 'w';
-                    } else {
-                        room[i][j] = 'k';
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 6; j++)
-                global_room[i][j] = room[i][j];
-        System.out.println("done");
+//        createMAT();
         showMapBtn.setEnabled(true);
 //
 //        if (BTA != null) {
@@ -279,6 +262,28 @@ public class MainActivity extends AppCompatActivity {
 //        super.onStart();
 //        Log.d(TAG,"On Start");
 //    }
+
+    protected void createMAT(){
+        char[][] room = new char[6][6];
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (i == 0 || i == 5) {
+                    room[i][j] = 'w';
+                } else {
+                    if (j == 0 || j == 5) {
+                        room[i][j] = 'w';
+                    } else {
+                        room[i][j] = 'k';
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 6; i++)
+            for (int j = 0; j < 6; j++)
+                global_room[i][j] = room[i][j];
+        System.out.println("done");
+
+    }
 
     @Override
     protected void onResume() {
