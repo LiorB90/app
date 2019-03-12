@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">RoboApp_2</string>
+    <string name="connectBtn">Connect</string>
+    <string name="startBtn">Start</string>
+    <string name="stopBtn">Stop</string>
+    <string name="showMapBtn">show map</string>
+    <string name="coverbotAppTitle">CoverBot App</string>
+    <string name="quitBtn">Quit</string>
+</resources>
