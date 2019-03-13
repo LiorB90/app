@@ -1,5 +1,6 @@
 package com.example.roboapp_2;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -9,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -254,6 +257,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Write Successful: " + s);
     }
 
+    @SuppressLint("HandlerLeak")
+    private final Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            String string = bundle.getString("msg");
+            startBtn.setText(string);
+            startBtn.setTextColor(Color.BLACK);
+        }
+    };
+
+
     Thread worker = new Thread(new Runnable(){
         public void run() {
             final int BUFFER_SIZE = 1024;
@@ -265,7 +280,11 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     bytes = socket.getInputStream().read(buffer);
                     String text = new String(buffer,0,bytes);
-                    Log.d(TAG, text);
+                    Message msg = handler.obtainMessage();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("msg", text);
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d(TAG, e.getMessage());
