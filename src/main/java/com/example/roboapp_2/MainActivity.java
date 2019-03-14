@@ -18,21 +18,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
 import java.io.IOException;
-//import java.io.InputStream;
-//import java.io.OutputStream;
-//import java.io.Serializable;
-//import java.lang.reflect.Method;
-//import android.Manifest;
-//import android.os.Build;
-//import android.os.Bundle;
-//import android.widget.AdapterView;
-//import android.widget.ListView;
-//import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter BTA;
     private BluetoothDevice BTD;
     private boolean isConnected;
+    private boolean isMap;
     BluetoothConnector.BluetoothSocketWrapper socket;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -84,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG,"On Create");
 
-        global_room = new char[6][6];
         connectBtn = (Button) findViewById(R.id.btn_connect);
         startBtn = (Button) findViewById(R.id.btn_start);
         stopBtn = (Button) findViewById(R.id.btn_stop);
         showMapBtn = (Button) findViewById(R.id.btn_map);
         quitBtn = (Button) findViewById(R.id.btn_quit);
         isConnected = false;
+        isMap = false;
         BTA = BluetoothAdapter.getDefaultAdapter();
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -104,16 +93,16 @@ public class MainActivity extends AppCompatActivity {
         showMapBtn.setEnabled(false);
 
 
-//        if (BTA.isEnabled() && isConnected){
-//            connectBtn.setText("Connected");
-//            connectBtn.setTextColor(Color.GREEN);
-//            startBtn.setEnabled(true);
-//        }
-//        else{
-//            connectBtn.setText("Connect");
-//            connectBtn.setTextColor(Color.RED);
-//            startBtn.setEnabled(false);
-//        }
+        if (BTA.isEnabled() && isConnected){
+            connectBtn.setText("Connected");
+            connectBtn.setTextColor(Color.GREEN);
+            startBtn.setEnabled(true);
+        }
+        else{
+            connectBtn.setText("Connect");
+            connectBtn.setTextColor(Color.RED);
+            startBtn.setEnabled(false);
+        }
 
         quitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,9 +144,6 @@ public class MainActivity extends AppCompatActivity {
                 char[] temp = new char[global_room[0].length];
                 String t;
                 for (int i = 0; i < global_room.length; i++) {
-                    t = "map" + i;
-                    System.out.println(t);
-                    temp = global_room[i];
                     map.putExtra("map" + i, global_room[i]);
                 }
                 map.putExtra("length", global_room.length);
@@ -168,13 +154,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Start(View v) throws IOException{
-        Log.d(TAG,"what is up manniga");
+        Log.d(TAG,"Start was Clicked");
         startBtn.setText("Running");
         startBtn.setTextColor(Color.GREEN);
         sendBTClass();
     }
 
     private int qCounter(String s){
+        Log.d(TAG,"In q Counter");
         int count = 0;
         for(int i =0; i < s.length(); i++) {
             if (s.charAt(i) == 'q')
@@ -183,7 +170,8 @@ public class MainActivity extends AppCompatActivity {
         return count;
     }
 
-    private int untillQCounter(String s){
+    private int untilQCounter(String s){
+        Log.d(TAG,"In Till Q Counter");
         int count = 0;
         for(int i =0; i < s.length(); i++) {
             if (s.charAt(i)!= 'q')
@@ -196,23 +184,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void createMAT(String s){
-        int numOgQ = qCounter(s);
-        int length = numOgQ + 1;
-        int width = untillQCounter(s);
-        char[][] room = new char[length][width];
+        Log.d(TAG,"In Create MAT");
+        int numOfQ = qCounter(s);
+        int length = numOfQ + 1;
+        int width = untilQCounter(s);
+        int row=0;
 
+        Log.d(TAG,"Length: "+length+" Width: "+width);
+        char[][] room = new char[length][width];
         for(int i=0;i<s.length();){
             int jCount = 0;
             for(int j=0;j<width;j++){
-                room[i][j] = s.charAt(i+j);
+                room[row][j] = s.charAt(i+j);
                 jCount++;
+
             }
-            i=jCount+1;
+            i += jCount+1;
+            row++;
         }
-        for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 6; j++)
+        global_room = new char[length][width];
+        for (int i = 0; i < length; i++)
+            for (int j = 0; j < width; j++)
                 global_room[i][j] = room[i][j];
-        System.out.println("done");
+        isMap = true;
     }
 
     private void sendBTClass(){
@@ -244,9 +238,13 @@ public class MainActivity extends AppCompatActivity {
     private final Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            Log.d(TAG,"In Handler");
             Bundle bundle = msg.getData();
+            Log.d(TAG,"Got MSG");
             String string = bundle.getString("msg");
+            Log.d(TAG,"Converted to String");
             createMAT(string);
+            Log.d(TAG,"Mat Created");
             showMapBtn.setEnabled(true);
         }
     };
@@ -290,6 +288,9 @@ public class MainActivity extends AppCompatActivity {
             connectBtn.setTextColor(Color.RED);
 //            startBtn.setEnabled(false);
         }
+        if( isMap){
+            showMapBtn.setEnabled(true);
+        }
     }
 
     @Override
@@ -303,24 +304,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.d(TAG,"onStop");
     }
-
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        Log.d(TAG,"onRestart");
-//    }
-//
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        Log.d(TAG,"onSaveInstanceState");
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        Log.d(TAG,"onRestoreInstanceState");
-//    }
 
     @Override
     protected void onDestroy() {

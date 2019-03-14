@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -53,9 +54,6 @@ public class CanvasClass extends View{
     public void setRoom(char[][] room) {
         this.room = new char[getLength()][getWidth2()];
         this.room = room;
-        this.room[1][2] = 'w';
-        this.room[2][2] = 'z';
-        this.room[3][2] = 'z';
     }
 
     public void setPaints(){
@@ -89,21 +87,16 @@ public class CanvasClass extends View{
         wall.setTextSize(50);
     }
 
-
-
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         canvas.drawText("Map", 300, 300, mText);
-        canvas.drawText("Visited Once",400,canvas.getHeight()-300,known);
-        canvas.drawText("Visited Twice",395,canvas.getHeight()-200,known2);
-        canvas.drawText("Obstacle/Wall",385,canvas.getHeight()-100,wall);
-
         for( int i=0;i<getLength();i++){
             for(int j=0;j<getWidth2();j++){
-                rect.set(j*canvas.getWidth()/getWidth2(),i*(canvas.getHeight()/(getLength()*2))+(canvas.getHeight()/(getLength()))+(canvas.getHeight()/(getLength()*2)),(j+1)*canvas.getWidth()/getWidth2(),(i+1)*canvas.getHeight()/(getLength()*2)+(canvas.getHeight()/(getLength()))+(canvas.getHeight()/(getLength()*2)));
+                rect.set(j*getWidth()/getWidth2(),
+                        (i)*(900/getLength())+(getHeight()-1300),
+                        (j+1)*getWidth()/getWidth2(),
+                        (i+1)*(900/getLength())+(getHeight()-1300));
                 if(getRoom()[i][j] == 'w')
                     canvas.drawRect(rect,gray);
                 else if(getRoom()[i][j] == 'k')
@@ -112,5 +105,8 @@ public class CanvasClass extends View{
                     canvas.drawRect(rect,blue);
             }
         }
+        canvas.drawText("Visited Once",400,getHeight()-300,known);
+        canvas.drawText("Visited Twice",395,getHeight()-200,known2);
+        canvas.drawText("Obstacle/Wall",385,getHeight()-100,wall);
     }
 }
