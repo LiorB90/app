@@ -20,19 +20,19 @@ import android.view.View;
 import android.widget.Button;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import android.Manifest;
-import android.os.Build;
-import android.os.Bundle;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import java.nio.charset.Charset;
+//import java.io.InputStream;
+//import java.io.OutputStream;
+//import java.io.Serializable;
+//import java.lang.reflect.Method;
+//import android.Manifest;
+//import android.os.Build;
+//import android.os.Bundle;
+//import android.widget.AdapterView;
+//import android.widget.ListView;
+//import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+//import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,15 +45,10 @@ public class MainActivity extends AppCompatActivity {
     private Button quitBtn;
     private char[][] global_room;
 
-    ///// Test /////
     private BluetoothAdapter BTA;
     private BluetoothDevice BTD;
-    //private Set<BluetoothDevice> pairedDevices;
     private boolean isConnected;
     BluetoothConnector.BluetoothSocketWrapper socket;
-
-//    private OutputStream outputStream;
-//    private InputStream inStream;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -82,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-    ///// End Test //////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         stopBtn = (Button) findViewById(R.id.btn_stop);
         showMapBtn = (Button) findViewById(R.id.btn_map);
         quitBtn = (Button) findViewById(R.id.btn_quit);
-        ///// Test /////
         isConnected = false;
         BTA = BluetoothAdapter.getDefaultAdapter();
         IntentFilter filter = new IntentFilter();
@@ -104,25 +97,23 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter);
-        ///// End Test //////
 
         startBtn.setEnabled(true);
-
         startBtn.setEnabled(false);
         stopBtn.setEnabled(false);
         showMapBtn.setEnabled(false);
 
 
-        if (BTA.isEnabled() && isConnected){
-            connectBtn.setText("Connected");
-            connectBtn.setTextColor(Color.GREEN);
-            startBtn.setEnabled(true);
-        }
-        else{
-            connectBtn.setText("Connect");
-            connectBtn.setTextColor(Color.RED);
-            startBtn.setEnabled(false);
-        }
+//        if (BTA.isEnabled() && isConnected){
+//            connectBtn.setText("Connected");
+//            connectBtn.setTextColor(Color.GREEN);
+//            startBtn.setEnabled(true);
+//        }
+//        else{
+//            connectBtn.setText("Connect");
+//            connectBtn.setTextColor(Color.RED);
+//            startBtn.setEnabled(false);
+//        }
 
         quitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,24 +135,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        startBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//                ///// Test //////
-//                ///// End Test //////
-//            }
-//        });
-
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startBtn.setText("Start");
                 startBtn.setTextColor(Color.BLACK);
                 stopBtn.setEnabled(false);
-                //Intent map = new Intent(MainActivity.this, MapActivity.class);
-                //startActivity(map);
             }
         });
 
@@ -186,43 +165,49 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(map);
             }
         });
-
     }
 
-///////////////// Test //////////////////////
     public void Start(View v) throws IOException{
         Log.d(TAG,"what is up manniga");
         startBtn.setText("Running");
         startBtn.setTextColor(Color.GREEN);
-        stopBtn.setEnabled(true);
-//        createMAT();
-        showMapBtn.setEnabled(true);
-//        sendBT();
         sendBTClass();
     }
-///////////////// End Test //////////////////////
 
+    private int qCounter(String s){
+        int count = 0;
+        for(int i =0; i < s.length(); i++) {
+            if (s.charAt(i) == 'q')
+                count++;
+        }
+        return count;
+    }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        Log.d(TAG,"On Start");
-//    }
-
-    protected void createMAT(){
-        char[][] room = new char[6][6];
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (i == 0 || i == 5) {
-                    room[i][j] = 'w';
-                } else {
-                    if (j == 0 || j == 5) {
-                        room[i][j] = 'w';
-                    } else {
-                        room[i][j] = 'k';
-                    }
-                }
+    private int untillQCounter(String s){
+        int count = 0;
+        for(int i =0; i < s.length(); i++) {
+            if (s.charAt(i)!= 'q')
+                count++;
+            else{
+                break;
             }
+        }
+        return count;
+    }
+
+    protected void createMAT(String s){
+        int numOgQ = qCounter(s);
+        int length = numOgQ + 1;
+        int width = untillQCounter(s);
+        char[][] room = new char[length][width];
+
+        for(int i=0;i<s.length();){
+            int jCount = 0;
+            for(int j=0;j<width;j++){
+                room[i][j] = s.charAt(i+j);
+                jCount++;
+            }
+            i=jCount+1;
         }
         for (int i = 0; i < 6; i++)
             for (int j = 0; j < 6; j++)
@@ -243,14 +228,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Created Connector");
             socket = BTC.connect();
             Log.d(TAG,"Connected to"+socket.getRemoteDeviceName());
-            worker.start();
+            workerInput.start();
             write("start");
         }catch(Exception e){
             Log.d(TAG,e.getMessage());
         }
-
     }
-
 
     public void write(String s) throws IOException {
         socket.getOutputStream().write(s.getBytes());
@@ -263,13 +246,13 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             Bundle bundle = msg.getData();
             String string = bundle.getString("msg");
-            startBtn.setText(string);
-            startBtn.setTextColor(Color.BLACK);
+            createMAT(string);
+            showMapBtn.setEnabled(true);
         }
     };
 
 
-    Thread worker = new Thread(new Runnable(){
+    Thread workerInput = new Thread(new Runnable(){
         public void run() {
             final int BUFFER_SIZE = 1024;
             byte[] buffer = new byte[BUFFER_SIZE];
