@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         quitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendBTClass("q");
                 MainActivity.this.finish();
             }
         });
@@ -127,9 +128,7 @@ public class MainActivity extends AppCompatActivity {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startBtn.setText("Start");
-                startBtn.setTextColor(Color.BLACK);
-                stopBtn.setEnabled(false);
+                //TODO: write stop method (write("p"))
             }
         });
 
@@ -157,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Start was Clicked");
         startBtn.setText("Running");
         startBtn.setTextColor(Color.GREEN);
-        sendBTClass();
+        sendBTClass("s");
     }
 
     private int qCounter(String s){
@@ -209,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         isMap = true;
     }
 
-    private void sendBTClass(){
+    private void sendBTClass(String str){
         try {
 
             Log.d(TAG, "In SendBTClass");
@@ -223,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             socket = BTC.connect();
             Log.d(TAG,"Connected to"+socket.getRemoteDeviceName());
             workerInput.start();
-            write("start");
+            write(str);
         }catch(Exception e){
             Log.d(TAG,e.getMessage());
         }
@@ -309,5 +308,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"onDestroy");
+//        unregisterReceiver(mReceiver);
+//        try {
+//            socket.getOutputStream().close();
+//            socket.getInputStream().close();
+//            socket.close();
+//        } catch(Exception e){
+//            Log.d(TAG,e.getMessage());
+//        }
     }
 }

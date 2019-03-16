@@ -11,12 +11,14 @@ import android.widget.TextView;
 public class CanvasClass extends View{
 
     private Paint gray;
+    private Paint red;
     private Paint blue;
     private Paint cyan;
     private Paint mText;
     private Paint known;
     private Paint known2;
     private Paint wall;
+    private Paint end;
     private Rect rect;
     private int length;
     private int width;
@@ -59,32 +61,39 @@ public class CanvasClass extends View{
     public void setPaints(){
         gray = new Paint();
         blue = new Paint();
+        red = new Paint();
         cyan = new Paint();
         mText = new Paint();
         known = new Paint();
         known2 = new Paint();
         wall = new Paint();
+        end = new Paint();
 
         gray.setColor(Color.GRAY);
+        red.setColor(Color.RED);
         blue.setColor(Color.BLUE);
         cyan.setColor(Color.CYAN);
         mText.setColor(Color.BLACK);
         known.setColor(Color.CYAN);
         known2.setColor(Color.BLUE);
         wall.setColor(Color.GRAY);
+        end.setColor(Color.RED);
 
         gray.setStyle(Paint.Style.FILL_AND_STROKE);
+        red.setStyle(Paint.Style.FILL);
         blue.setStyle(Paint.Style.FILL);
         cyan.setStyle(Paint.Style.FILL);
         mText.setStyle(Paint.Style.FILL);
         known.setStyle(Paint.Style.FILL);
         known2.setStyle(Paint.Style.FILL);
         wall.setStyle(Paint.Style.FILL);
+        end.setStyle(Paint.Style.FILL);
 
         mText.setTextSize(250);
         known.setTextSize(50);
         known2.setTextSize(50);
         wall.setTextSize(50);
+        end.setTextSize(50);
     }
 
     @Override
@@ -103,10 +112,13 @@ public class CanvasClass extends View{
                     canvas.drawRect(rect,cyan);
                 else if(getRoom()[i][j] == 'z')
                     canvas.drawRect(rect,blue);
+                else if(getRoom()[i][j] == 'E')
+                    canvas.drawRect(rect,red);
             }
         }
-        canvas.drawText("Visited Once",400,getHeight()-300,known);
-        canvas.drawText("Visited Twice",395,getHeight()-200,known2);
-        canvas.drawText("Obstacle/Wall",385,getHeight()-100,wall);
+        canvas.drawText("Visited Once",150,getHeight()-300,known);
+        canvas.drawText("Visited Twice",150,getHeight()-200,known2);
+        canvas.drawText("Obstacle/Wall",550,getHeight()-300,wall);
+        canvas.drawText("End Position",550,getHeight()-200,end);
     }
 }
